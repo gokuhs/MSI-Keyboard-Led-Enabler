@@ -47,6 +47,7 @@ const char* PARAM_COLOR1 =					"-color1";
 const char* PARAM_COLOR2 =					"-color2";
 const char* PARAM_COLOR3 =					"-color3";
 const char* PARAM_LEVEL	=					"-level";
+const char* CLOSE_DAEMON	=				"-exitdaemon";
 
 /** Allowed modes values */
 const char* VALUE_MODE_NORMAL = 			"normal";

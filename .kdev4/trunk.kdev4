@@ -1,0 +1,31 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\n\x00t\x00r\x00u\x00n\x00k)
+
+[Defines And Includes][Compiler]
+Name=GCC
+Path=gcc
+Type=GCC
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=MSI Led Enabler
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/gokuhs/Documents/Desarrollo_PC/MSI_GT_GE_Led_Enabler.git/trunk/msiledenabler
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=
+Use External Terminal=false
+Working Directory=
+isExecutable=true
+
+[Project]
+VersionControlSupport=kdevsubversion

@@ -24,7 +24,7 @@ void sendMesage(char * mensaje)
   
   strcpy(m1.val,mensaje);
   msgsnd(id, &m1, msgSize, IPC_NOWAIT);
-  //printf("Msg. sent: type=%d, val=%s\n",  m1.type, m1.val);
+  //printf("Msg. sent: type=%d, val=%s\nValores 0->%#x 1->%#x 2->%#x 3->%#x 4->%#x 5->%#x\n",  m1.type, m1.val, mensaje[0], mensaje[1], mensaje[2], mensaje[3], mensaje[4], mensaje[5]);
 
   //msgctl(id, IPC_RMID, 0);
 }
@@ -45,6 +45,7 @@ void ReadMesage(char * mensaje)
 
   msgrcv(id, &m2, msgSize, rcvType, IPC_NOWAIT);
   //printf("Msg. received: type=%d, val=%s\n",m2.type, m2.val);
+  //printf("Msg. received: type=%d, val=%s\nValores 0->%#x 1->%#x 2->%#x 3->%#x 4->%#x 5->%#x\n",  m2.type, m2.val, mensaje[0], mensaje[1], mensaje[2], mensaje[3], mensaje[4], mensaje[5]);
   
   strcpy(mensaje,m2.val);
 }

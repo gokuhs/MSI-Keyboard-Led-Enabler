@@ -1,0 +1,30 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          msi_kb_daemon
+# Required-Start:    $all
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: msi_kb_daemon
+# Description:       Enable daemon for Steelseries MSI Keyboard
+### END INIT INFO
+
+
+case "$1" in
+  start)
+	msiledenabler &
+        ;;
+  stop)
+	 msiledenabler -exitdaemon
+        ;;
+  restart|force-reload)
+        $0 stop
+        sleep 8
+        $0 start
+        ;;
+  *)
+        echo "Uso: $0 {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+

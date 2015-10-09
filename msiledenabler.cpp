@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <wchar.h>
-#include "hidapi.h"
+#include <hidapi/hidapi.h>
 #include "msg.h"
 #include "msiledenabler.h"
 #include <string.h>
@@ -30,15 +30,24 @@ static void skeleton_daemon()
 
     /* An error occurred */
     if (pid < 0)
+    {
+	syslog (LOG_NOTICE, "Unable to get pid (pid < 0).");
         exit(EXIT_FAILURE);
+    }
 
     /* Success: Let the parent terminate */
     if (pid > 0)
+    {
+	syslog (LOG_NOTICE, "Unable to get pid (pid > 0).");
         exit(EXIT_SUCCESS);
+    }
 
     /* On success: The child process becomes session leader */
     if (setsid() < 0)
-        exit(EXIT_FAILURE);
+    {
+	syslog (LOG_NOTICE, "Unable to set sid (setsid() < 0).");
+	exit(EXIT_FAILURE);
+    }
 
     /* Catch, ignore and handle signals */
     //TODO: Implement a working signal handler */
@@ -50,18 +59,24 @@ static void skeleton_daemon()
 
     /* An error occurred */
     if (pid < 0)
+    {
+	syslog (LOG_NOTICE, "Unable to get pid -2- (pid < 0).");
         exit(EXIT_FAILURE);
+    }
 
     /* Success: Let the parent terminate */
     if (pid > 0)
+    {
+	syslog (LOG_NOTICE, "Unable to get pid -2- (pid > 0).");
         exit(EXIT_SUCCESS);
+    }
 
     /* Set new file permissions */
     umask(0);
 
     /* Change the working directory to the root directory */
     /* or another appropriated directory */
-    chdir("/");
+    chdir("/tmp");
 
     /* Close all open file descriptors */
     int x;
@@ -162,6 +177,7 @@ unsigned char parseColor(char* color) {
 void testMode()
 {
   char mensaje[6];
+  memset(&mensaje, sizeof(char), 6);
   for (int aux = 0x00; aux < 0xFF; aux += 0x01)
   {
     mensaje[0] = aux;
@@ -180,11 +196,12 @@ void testMode()
 //Default Mode, wait to client
 int  daemonMode()
 {
-    skeleton_daemon(); //Fork
+    //skeleton_daemon(); //Fork
     
     hid_device *handle;
     
     char mensaje[6];
+    memset(&mensaje, sizeof(char), 6);
   
     handle = hid_open(0x1770, 0xff00, NULL);
     if (!handle) {
@@ -204,47 +221,47 @@ int  daemonMode()
     {
       //printf("Read Mensaje\n");
       ReadMesage(mensaje);
-      if(mensaje[0] != '\0')
+      if(mensaje[0] != 'e' && mensaje[0] != 0x00)
       {
 	if (mensaje[4] != 0x00)
 	  mensaje[4] = (mensaje[4] - 0x01);
-	switch (mensaje[0])
+	switch (mensaje[3])
 	{
 	  case MODE_NORMAL:
-	  {
-	    sendActivateArea(handle, AREA_LEFT, mensaje[1], mensaje[4]);
-	    sendActivateArea(handle, AREA_MIDDLE, mensaje[2], mensaje[4]);
-	    sendActivateArea(handle, AREA_RIGHT, mensaje[3], mensaje[4]);
+	  {	    
+	    sendActivateArea(handle, AREA_LEFT, mensaje[0], LEVEL_1);
+	    sendActivateArea(handle, AREA_MIDDLE, mensaje[1], LEVEL_1);
+	    sendActivateArea(handle, AREA_RIGHT, mensaje[2], LEVEL_1);
 	    commit(handle, MODE_NORMAL);
 	    break;
 	  }
 	  case MODE_WAVE:
 	  {
 	    //Wave Color = 3 colors
-	    sendActivateArea(handle, AREA_LEFT, mensaje[1], mensaje[4]);
-	    sendActivateArea(handle, AREA_MIDDLE, mensaje[2], mensaje[4]);
-	    sendActivateArea(handle, AREA_RIGHT, mensaje[3], mensaje[4]);
+	    sendActivateArea(handle, AREA_LEFT, mensaje[0], LEVEL_1);
+	    sendActivateArea(handle, AREA_MIDDLE, mensaje[1], LEVEL_1);
+	    sendActivateArea(handle, AREA_RIGHT, mensaje[2], LEVEL_1);
 	    commit(handle, MODE_WAVE);
 	    break;
 	  }
 	  case MODE_GAMING:
 	  {
-	    sendActivateArea(handle, AREA_LEFT, mensaje[1], mensaje[4]);
+	    sendActivateArea(handle, AREA_LEFT, mensaje[0], LEVEL_1);
 	    commit(handle, MODE_GAMING);
 	    break;
 	  }
 	  case MODE_DUAL_COLOR:
 	  {
-	    sendActivateArea(handle, AREA_LEFT, mensaje[1], mensaje[4]);
-	    sendActivateArea(handle, AREA_MIDDLE, mensaje[2], mensaje[4]);
+	    sendActivateArea(handle, AREA_LEFT, mensaje[0], LEVEL_1);
+	    sendActivateArea(handle, AREA_MIDDLE, mensaje[1], LEVEL_1);
 	    commit(handle, MODE_DUAL_COLOR);
 	    break;
 	  }
 	  case MODE_BREATHING:
 	  {
-	    sendActivateArea(handle, AREA_LEFT, mensaje[1], mensaje[4]);
-	    sendActivateArea(handle, AREA_MIDDLE, mensaje[2], mensaje[4]);
-	    sendActivateArea(handle, AREA_RIGHT, mensaje[3], mensaje[4]);
+	    sendActivateArea(handle, AREA_LEFT, mensaje[0], LEVEL_1);
+	    sendActivateArea(handle, AREA_MIDDLE, mensaje[1], LEVEL_1);
+	    sendActivateArea(handle, AREA_RIGHT, mensaje[2], LEVEL_1);
 	    commit(handle, MODE_BREATHING);
 	    break;
 	  }
@@ -257,8 +274,13 @@ int  daemonMode()
       }
       else
       {
-	if(mensaje[0] != 0xff)
+	if (mensaje[0] == 'e' && mensaje[1] == 'n' && mensaje[2] == 'd' && mensaje[3] == '\0')
 	{
+	  syslog (LOG_NOTICE, "MSI Keyboard close messaje received.");
+	  sendActivateArea(handle, AREA_LEFT, 0x00, LEVEL_1);
+	  sendActivateArea(handle, AREA_MIDDLE, 0x00, LEVEL_1);
+	  sendActivateArea(handle, AREA_RIGHT, 0x00, LEVEL_1);
+	  commit(handle, MODE_BREATHING);
 	  break;
 	}
       }
@@ -282,6 +304,17 @@ int main(int argc, char* argv[]) {
 #endif
 
 	memset(&arguments, UCHAR_MAX, kSize);
+	memset(&mensaje, sizeof(char), 6);
+	
+	if (argc == 2 && (strcmp(argv[1], CLOSE_DAEMON) == 0 ))
+	{
+	  mensaje[0] = 'e';
+	  mensaje[1] = 'n';
+	  mensaje[2] = 'd';
+	  mensaje[3] = '\0';
+	  sendMesage(mensaje);
+	  return 1;
+	}
 
 	if (argc == 2 && (strcmp(argv[1], PARAM_HELP_SHORT) == 0 || strcmp(argv[1], PARAM_HELP) == 0)) {
 		printf("%s", usage);
