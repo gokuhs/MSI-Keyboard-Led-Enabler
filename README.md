@@ -1,7 +1,7 @@
 MSI Led Enabler
 =====================
 
-This is a modded code of PaNaVTEC's MSI_GT_GE_Led_Enabler to compile in Linux Debian.
+With this program you can make works on linux your Steelseries keyboard. You can change colors as if the official MSI software, KLM (Keyboar Led Manager) is involved.
 
 How to compile:
 ===============
@@ -13,6 +13,18 @@ $ git clone https://github.com/gokuhs/MSI_GT_GE_Led_Enabler
 Now in a terminal type:
 
 $ make
+
+Now install
+
+$ sudo make install
+
+How to uninstall
+================
+
+To uninstall simple type this in a terminal
+
+$ sudo make unisntall
+
 
 How to use:
 ===========
@@ -34,13 +46,23 @@ This program uses 4 arguments:
 - Sets the color of the area 3 of the keyboard * (see supported color modes)
 
 5º Light level:
-- Establish the intensity level of the leds
+- Establish the intensity level of the leds (From 0 to 4)
 
 
 Example of use:
 
-sudo ./msiledenabler -mode normal -color1 blue -color2 green -color3 red -level 3
+./msiledenabler -mode normal -color1 blue -color2 green -color3 red -level 3
 
+
+Supported color modes
+=====================
+
+The avaliable colors for you keyboard are black, red, orange, yellow, green, sky, blue, purple and white.
+
+Tested Models
+=============
+
+This program only tested in a MSI GT70 0NC
 
 Original text
 ================
