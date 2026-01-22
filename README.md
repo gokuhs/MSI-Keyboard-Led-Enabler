@@ -45,11 +45,13 @@ msiledenabler -mode <mode> [options] -level <0-3>
 1.  **Standard Modes**:
     *   `normal`: All LEDs on. Requires `-color1` (Left), `-color2` (Center), `-color3` (Right).
     *   `gaming`: Only Left area on. Requires `-color1`.
+
+2.  **Experimental Modes (May not work on GT70)**:
     *   `breathing`: Pulsating effect.
     *   `wave`: Wave effect.
     *   `dualcolor`: Two colors.
 
-2.  **Presets (No colors required)**:
+3.  **Presets (No colors required)**:
     *   `rainbow`: Red, Green, Blue.
     *   `hot`: Red, Orange, Yellow.
     *   `cool`: Blue, Sky, Green.
@@ -58,7 +60,7 @@ msiledenabler -mode <mode> [options] -level <0-3>
     *   `sunset`: Orange, Red, Purple.
 
 ### Arguments
-*   `-level <0-3>`: Brightness level (0=Low, 3=High).
+*   `-level <0-3>`: Color brightness/clarity (0=Darker, 3=Brighter/Whiter).
 *   `-color1, -color2, -color3`: Colors for Left, Center, and Right areas.
     *   *Valid colors*: black, red, orange, yellow, green, sky, blue, purple, white.
 
@@ -78,6 +80,11 @@ msiledenabler -mode gaming -color1 red -level 3
 This project includes configuration for **Visual Studio Code**. Just open the folder and use the recommended workspace settings.
 *   **Build**: `Ctrl+Shift+B`
 *   **Debug**: `F5`
+
+## Credits
+Based on the original work by **Christian Panadero (PaNaVTEC)**.
+Original Source: https://github.com/PaNaVTEC/MSI_GT_GE_Led_Enabler
+Thanks to Signal11 for HIDAPI.
 
 ## License
 **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**
@@ -120,16 +127,58 @@ sudo make uninstall
 ```
 
 ## Uso
-Consulta la sección en inglés para ver la lista completa de comandos y ejemplos. La sintaxis es idéntica.
 
-### Ejemplos Rápidos
+Este programa se ejecuta como un servicio, pero, tu puedes enviar comandos a él desde la misma terminal.
+
+### Sintaxis
 ```bash
-# Usar el preset "Océano" con brillo medio
+msiledenabler -mode <mode> [options] -level <0-3>
+```
+
+### Modos
+1.  **Modos Standard**:
+    *   `normal`: Todos los red activados. Requiere `-color1` (Izquierda), `-color2` (Centro), `-color3` (Derecha).
+    *   `gaming`: Solo la parte izquierda está encendida. Requiere de `-color1`.
+
+2.  **Modos Experimentales (Puede no funcionar en GT70)**:
+    *   `breathing`: Efecto de palpitación.
+    *   `wave`: Efecto de ola.
+    *   `dualcolor`: Dos colores.
+
+3.  **Presets (No requiere colores)**:
+    *   `rainbow`: Rojo, Verde, Azul.
+    *   `hot`: Rojo, Naranja, Amarillo.
+    *   `cool`: Azul, Azul Claro, Verde.
+    *   `forest`: Verde, Verde, Naranja.
+    *   `ocean`: Azul, Azul Claro, Azul.
+    *   `sunset`: Naranja, Rojo, Morado.
+
+### Argumentos
+*   `-level <0-3>`: Brillo del color (0=Oscuro, 3=Claro).
+*   `-color1, -color2, -color3`: Colores para la izquierda, dentro y derecha.
+    *   *Colores Válidos*: black, red, orange, yellow, green, sky, blue, purple, white.
+
+### Ejemplos
+```bash
+# Poner unos colores en específico
+msiledenabler -mode normal -color1 red -color2 green -color3 blue -level 3
+
+# Usar un preset
 msiledenabler -mode ocean -level 2
 
-# Configuración manual (Rojo - Verde - Azul)
-msiledenabler -mode normal -color1 red -color2 green -color3 blue -level 3
+# Modo gaming (Solo la izquierda)
+msiledenabler -mode gaming -color1 red -level 3
 ```
+
+## Desarrollo
+El proyecto inclute una configuracion para**Visual Studio Code**. Sólo abre el archivo del workspace..
+*   **Construir**: `Ctrl+Shift+B`
+*   **Debug**: `F5`
+
+## Créditos
+Basado en el trabajo original de **Christian Panadero (PaNaVTEC)**.
+Código original: https://github.com/PaNaVTEC/MSI_GT_GE_Led_Enabler
+Gracias Signal11 Por HIDAPI.
 
 ## Licencia
 **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**

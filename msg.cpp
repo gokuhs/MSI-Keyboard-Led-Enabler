@@ -25,7 +25,7 @@ void sendMessage(char *mensaje)
   }
   msgSize = sizeof(MSG);
 
-  strcpy(m1.val, mensaje);
+  memcpy(m1.val, mensaje, 6);
   msgsnd(id, &m1, msgSize, IPC_NOWAIT);
   // printf("Msg. sent: type=%d, val=%s\nValores 0->%#x 1->%#x 2->%#x 3->%#x 4->%#x 5->%#x\n",  m1.type, m1.val, mensaje[0], mensaje[1], mensaje[2], mensaje[3], mensaje[4], mensaje[5]);
 
@@ -55,6 +55,6 @@ bool readMessage(char *mensaje, bool blocking)
     return false;
   }
 
-  strcpy(mensaje, m2.val);
+  memcpy(mensaje, m2.val, 6);
   return true;
 }

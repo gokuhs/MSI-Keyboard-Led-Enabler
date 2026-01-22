@@ -173,16 +173,42 @@ bool loadState(char *mensaje)
 	return false;
 }
 
-void applyConfig(hid_device *handle, char *raw_mensaje)
+void applyConfig(hid_device *handle, char *mensaje)
 {
-	char mensaje[6];
-	memcpy(mensaje, raw_mensaje, 6);
+	// Handle missing colors (0xFF) by loading previous state or defaults
+	if ((unsigned char)mensaje[0] == UCHAR_MAX || (unsigned char)mensaje[1] == UCHAR_MAX || (unsigned char)mensaje[2] == UCHAR_MAX)
+	{
+		char savedState[6];
+		bool loaded = loadState(savedState);
+
+		// Sanity check: ignore saved state if it contains garbage (0xFF)
+		if (loaded && ((unsigned char)savedState[0] == UCHAR_MAX || (unsigned char)savedState[1] == UCHAR_MAX || (unsigned char)savedState[2] == UCHAR_MAX))
+		{
+			loaded = false;
+		}
+
+		if (loaded)
+		{
+			if ((unsigned char)mensaje[0] == UCHAR_MAX)
+				mensaje[0] = savedState[0];
+			if ((unsigned char)mensaje[1] == UCHAR_MAX)
+				mensaje[1] = savedState[1];
+			if ((unsigned char)mensaje[2] == UCHAR_MAX)
+				mensaje[2] = savedState[2];
+		}
+		else
+		{
+			if ((unsigned char)mensaje[0] == UCHAR_MAX)
+				mensaje[0] = COLOR_RED;
+			if ((unsigned char)mensaje[1] == UCHAR_MAX)
+				mensaje[1] = COLOR_GREEN;
+			if ((unsigned char)mensaje[2] == UCHAR_MAX)
+				mensaje[2] = COLOR_BLUE;
+		}
+	}
 
 	// Adjust level from 1-based (IPC) to 0-based (Internal)
-	if (mensaje[4] != 0x00)
-		mensaje[4] = (mensaje[4] - 0x01);
-
-	unsigned char level = mensaje[4];
+	unsigned char level = (mensaje[4] > 0) ? mensaje[4] - 1 : 0;
 
 	switch (mensaje[3])
 	{
@@ -205,6 +231,7 @@ void applyConfig(hid_device *handle, char *raw_mensaje)
 	case MODE_DUAL_COLOR:
 		sendActivateArea(handle, AREA_LEFT, mensaje[0], level);
 		sendActivateArea(handle, AREA_MIDDLE, mensaje[1], level);
+		sendActivateArea(handle, AREA_RIGHT, mensaje[2], level);
 		commit(handle, MODE_DUAL_COLOR);
 		break;
 	case MODE_BREATHING:
@@ -261,8 +288,8 @@ int daemonMode()
 		{
 			if (mensaje[0] != 'e' && mensaje[0] != 0x00)
 			{
-				saveState(mensaje);
 				applyConfig(handle, mensaje);
+				saveState(mensaje);
 			}
 			else
 			{
@@ -490,7 +517,10 @@ int main(int argc, char *argv[])
 		// Dual color = two colors
 		mensaje[0] = arguments[kColor1];
 		mensaje[1] = arguments[kColor2];
-		mensaje[2] = 0x01;
+		if (arguments[kColor3] != UCHAR_MAX)
+			mensaje[2] = arguments[kColor3];
+		else
+			mensaje[2] = 0x01;
 		mensaje[3] = MODE_DUAL_COLOR;
 		mensaje[4] = arguments[kLevel] + 0x01;
 		mensaje[5] = '\0';
