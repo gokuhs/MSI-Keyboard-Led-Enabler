@@ -1,0 +1,13 @@
+# Binarios y Objetos
+*.o
+msiledenabler
+
+# Archivos de proyecto antiguos (KDevelop)
+*.kdev4
+.kdev4/
+
+# Configuración de VS Code (opcional, recomendable ignorar configuraciones locales)
+.vscode/
+
+# Archivos del sistema
+.DS_Store

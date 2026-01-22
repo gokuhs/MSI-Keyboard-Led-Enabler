@@ -1,0 +1,11 @@
+[Unit]
+Description=MSI Keyboard LED Enabler Daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/msiledenabler
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

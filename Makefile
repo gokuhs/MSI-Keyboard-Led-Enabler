@@ -30,16 +30,21 @@ clean:
 	rm -f *.o msiledenabler $(CPPOBJS)
 
 install:
+	-systemctl stop msi-led-enabler.service
 	cp msiledenabler /usr/bin
-	cp msi_kb_daemon /etc/init.d/msi_kb_daemon
-	chmod 755 /etc/init.d/msi_kb_daemon
-	update-rc.d msi_kb_daemon defaults
-	/etc/init.d/msi_kb_daemon start
+	cp msi-led-enabler.service /etc/systemd/system/
+	systemctl daemon-reload
+	systemctl enable msi-led-enabler.service
+	systemctl start msi-led-enabler.service
+	cp 99-msi-led.rules /etc/udev/rules.d/
+	udevadm control --reload-rules && udevadm trigger
 
 uninstall:
-	#/etc/init.d/msi_kb_daemon stop
-	update-rc.d -f msi_kb_daemon remove
+	systemctl stop msi-led-enabler.service
+	systemctl disable msi-led-enabler.service
+	rm -f /etc/systemd/system/msi-led-enabler.service
+	rm -f /etc/udev/rules.d/99-msi-led.rules
+	udevadm control --reload-rules && udevadm trigger
 	rm -f /usr/bin/msiledenabler
-	rm -f /etc/init.d/msi_kb_daemon
 	
 .PHONY: clean

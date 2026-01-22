@@ -1,0 +1,28 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "*.h": "cpp",
+            "*.cpp": "cpp"
+        },
+        "files.exclude": {
+            "**/.git": true,
+            "**/.DS_Store": true,
+            "**/*.o": true,
+            "msiledenabler": true,
+            "**/*.kdev4": true,
+            "**/.kdev4": true
+        },
+        "editor.formatOnSave": true,
+        "C_Cpp.default.configurationProvider": "ms-vscode.cpptools"
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.cpptools"
+        ]
+    }
+}
