@@ -100,10 +100,6 @@ unsigned char parseColor(char *color)
 	{
 		return COLOR_YELLOW;
 	}
-	else if (strcmp(color, VALUE_COLOR_ORANGE) == 0)
-	{
-		return COLOR_ORANGE;
-	}
 	else if (strcmp(color, VALUE_COLOR_GREEN) == 0)
 	{
 		return COLOR_GREEN;
@@ -411,7 +407,7 @@ int main(int argc, char *argv[])
 				else if (strcmp(argv[x], PARAM_LEVEL) == 0)
 				{
 
-					arguments[kLevel] = (unsigned char)argv[x + 1][0];
+					arguments[kLevel] = (unsigned char)atoi(argv[x + 1]);
 				}
 				else if (strcmp(argv[x], PARAM_COLOR1) == 0)
 				{
